@@ -1,0 +1,10 @@
+2/9/2021:11:46:30 : ------------------
+2/9/2021:11:46:30 : Starting up sketch
+2/9/2021:11:46:31 : Starting kinect
+2/9/2021:11:46:31 : Kinect number of devices 0 or less
+2/9/2021:11:46:31 : No Kinect connected
+2/9/2021:11:47:44 : ------------------
+2/9/2021:11:47:44 : Starting up sketch
+2/9/2021:11:47:45 : Starting kinect
+2/9/2021:11:47:46 : Kinect number of devices 0 or less
+2/9/2021:11:47:46 : No Kinect connected

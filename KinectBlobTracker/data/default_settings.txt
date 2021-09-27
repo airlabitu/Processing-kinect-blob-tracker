@@ -1,0 +1,15 @@
+10
+1000
+40.0
+5.0
+true
+ignore areas:
+0
+500
+localhost,12345,6789
+true
+mix.mp4
+true
+true
+false
+true
