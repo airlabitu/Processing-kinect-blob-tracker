@@ -144,22 +144,24 @@ void saveSettingsCallback(File selection) {
     println("Window was closed or the user hit cancel.");
   } else {
     println("Save to file " + selection.getAbsolutePath());
-    String [] settings = new String [15];
-    settings[0] = ""+t.getMinDepth();
-    settings[1] = ""+t.getMaxDepth();
-    settings[2] = ""+t.getThreshold();
-    settings[3] = ""+t.getDistThreshold();
-    settings[4] = ""+drawBlobs;
-    settings[5] = "ignore areas:"+t.ignoreAreasToString();
-    settings[6] = ""+inputMode;
-    settings[7] = ""+t.getMinBlobSize();
-    settings[8] = ""+oscInfo[0]+","+oscInfo[1]+","+oscInfo[2];
-    settings[9] = ""+sendingOSC;
-    settings[10] = simulationVideoFile;
-    settings[11] = ""+t.getNestedBlobFilter();
-    settings[12] = ""+disableSimulation;
-    settings[13] = ""+exit_on_kinect_error;
-    settings[14] = ""+logsEnabled;
+    String [] settings = new String [16];
+    settings[0] = "Min depth :"+t.getMinDepth();
+    settings[1] = "Max depth :"+t.getMaxDepth();
+    settings[2] = "Threshold :"+t.getThreshold();
+    settings[3] = "Dist threshold :"+t.getDistThreshold();
+    settings[4] = "Draw blobs :"+drawBlobs;
+    settings[5] = "Ignore areas :"+t.ignoreAreasToString();
+    settings[6] = "Input mode (0=kinect, 1=webcam, 2=simulation video) :"+inputMode;
+    settings[7] = "Min blob size :"+t.getMinBlobSize();
+    settings[8] = "OSC blob data primary connection  [listening port] [remote port] [remote IP] :"+oscInfo_primary[1]+":"+oscInfo_primary[2]+":"+oscInfo_primary[3];
+    settings[9] = "OSC blob data secondary connection [listening port] [remote port] [remote IP] :";
+    if (oscInfo_secondary.length == 4) settings[9] += oscInfo_secondary[1]+":"+oscInfo_secondary[2]+":"+oscInfo_secondary[3];
+    settings[10] = "Sending OSC :"+sendingOSC;
+    settings[11] = "Simulation video :"+simulationVideoFile;
+    settings[12] = "Nested blob filter :"+t.getNestedBlobFilter();
+    settings[13] = "Disable simulation :"+disableSimulation;
+    settings[14] = "Exit on Kinect error :"+exit_on_kinect_error;
+    settings[15] = "Logging to textfile :"+logsEnabled;
     saveStrings(selection.getAbsolutePath(), settings);
   }
 }
@@ -191,11 +193,11 @@ void loadSimulationVideoCallback(File selection) {
 void loadSettings(String path) {
   t.clearIgnoreAreas();
   String [] settings = loadStrings(path);
-  t.setMinDepth(int(settings[0]));
-  t.setMaxDepth(int(settings[1]));
-  t.setThreshold(float(settings[2]));
-  t.setDistThreshold(float(settings[3]));
-  drawBlobs = boolean(settings[4]);
+  t.setMinDepth(int(split(settings[0], ":")[1]));
+  t.setMaxDepth(int(split(settings[1], ":")[1]));
+  t.setThreshold(float(split(settings[2], ":")[1]));
+  t.setDistThreshold(float(split(settings[3],":")[1]));
+  drawBlobs = boolean(split(settings[4],":")[1]);
   String[] ignoreList = split(settings[5], '|');
   if (ignoreList.length > 1){
     println("areas in the list");
@@ -209,19 +211,29 @@ void loadSettings(String path) {
     }
   }
   else println("no ignore areas to load");
-  inputMode = int(settings[6]);
-  t.setMinBlobSize(int(settings[7]));
-  oscInfo = split(settings[8], ',');
-  oscP5 = new OscP5(this, int(oscInfo[1]));
-  myRemoteLocation = new NetAddress(oscInfo[0], int(oscInfo[2]));
-  sendingOSC = boolean(settings[9]);
-  simulationVideoFile = settings[10];
+  inputMode = int(split(settings[6], ":")[1]);
+  t.setMinBlobSize(int(split(settings[7], ":")[1]));
+  oscInfo_primary = split(settings[8], ':');
+  oscInfo_secondary = split(settings[9], ':');
+  
+  if (oscP5_primary != null) oscP5_primary.dispose(); // disconnect before connecting to loaded settings
+  oscP5_primary = new OscP5(this, int(oscInfo_primary[1]));
+  myRemoteLocation_primary = new NetAddress(oscInfo_primary[3], int(oscInfo_primary[2]));
+  
+  if (oscInfo_secondary.length == 4) {
+    if (oscP5_secondary != null) oscP5_secondary.dispose(); // disconnect before connecting to loaded settings
+    oscP5_secondary = new OscP5(this, int(oscInfo_secondary[1]));
+    myRemoteLocation_secondary = new NetAddress(oscInfo_secondary[3], int(oscInfo_secondary[2]));
+  }
+  
+  sendingOSC = boolean(split(settings[10], ":")[1]);
+  simulationVideoFile = split(settings[11], ":")[1];
   //loadSimulationVideo();
   setInputMode(inputMode);
-  t.setNestedBlobFilter(boolean(settings[11]));
-  disableSimulation = boolean(settings[12]);
-  exit_on_kinect_error = boolean(settings[13]);
-  logsEnabled = boolean(settings[14]);
+  t.setNestedBlobFilter(boolean(split(settings[12], ":")[1]));
+  disableSimulation = boolean(split(settings[13],":")[1]);
+  exit_on_kinect_error = boolean(split(settings[14], ":")[1]);
+  logsEnabled = boolean(split(settings[15], ":")[1]);
   loading = false; // flag loading process done
   
 }

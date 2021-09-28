@@ -9,7 +9,6 @@
 
 // ToDo
   // Tjek og implementer bedre performance - e.g. clear video/kinect/video objekter efter mode change
-  // Test med Kinect 
 
 import processing.video.*;
 import org.openkinect.freenect.*;
@@ -24,10 +23,14 @@ Capture webCam;
 
 Tracker t = new Tracker();
 
-OscP5 oscP5;
-NetAddress myRemoteLocation;
+OscP5 oscP5_primary;
+OscP5 oscP5_secondary;
+NetAddress myRemoteLocation_primary;
+NetAddress myRemoteLocation_secondary;
 
-String [] oscInfo;
+String [] oscInfo_primary;
+String [] oscInfo_secondary;
+
 String logFile = "kinect_log_.txt";
 boolean logsEnabled = true; // set insettings file
 boolean exit_on_kinect_error = true; // set insettings file
@@ -55,8 +58,8 @@ void setup() {
   }
   
   // email alert prosponer
-  kinectAlertProsponer = new OscAlertProsponer(oscP5, "127.0.0.1", 11011, "/KinectAlive");
-  kinectAlertProsponer.isActive = true;
+  kinectAlertProsponer = new OscAlertProsponer(new OscP5(this, 22022), "127.0.0.1", 11011, "/KinectAlive");
+  kinectAlertProsponer.isActive = true; // tris setting could be set in the settings file
 }
 
 
@@ -182,7 +185,10 @@ void sendBlobsOsc(){
     myMessage.add(int(b.getNrOfPixels())); // add blob nr of pixels
     blobsAdded = true;
   }  
-  if (blobsAdded) oscP5.send(myMessage, myRemoteLocation); // send the message if any blobs where added to the OSC message
+  if (blobsAdded) {
+    oscP5_primary.send(myMessage, myRemoteLocation_primary); // send the message if any blobs where added to the OSC message
+    if (oscInfo_secondary.length == 4) oscP5_secondary.send(myMessage, myRemoteLocation_secondary); // send the same message to a second receiver
+  }
 }
 
 void log(String log, String file){
