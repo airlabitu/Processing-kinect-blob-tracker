@@ -6,7 +6,7 @@ Draw blobs :true
 Ignore areas :
 Input mode [0=kinect] [1=webcam] [2=simulation video] :0
 Min blob size :500
-OSC blob data primary connection  [listening port] [remote port] [remote IP] :12345:6789:localhost
+OSC blob data primary connection  [listening port] [remote port] [remote IP] :12345:6789:172.20.10.4
 OSC blob data secondary connection [listening port] [remote port] [remote IP] :54321:9876:localhost
 Sending OSC :true
 Simulation video :mix.mp4

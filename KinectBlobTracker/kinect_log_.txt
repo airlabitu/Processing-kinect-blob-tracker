@@ -221,3 +221,19 @@
 28/9/2021:15:8:39 : Starting up sketch
 28/9/2021:15:8:41 : Starting kinect
 28/9/2021:15:8:41 : Kinect number of devices 0 or less
+5/11/2021:10:44:44 : ------------------
+5/11/2021:10:44:44 : Starting up sketch
+5/11/2021:10:44:46 : Starting kinect
+5/11/2021:10:44:47 : Initiating kinect depth: kinect.initDepth()
+5/11/2021:12:26:12 : ------------------
+5/11/2021:12:26:12 : Starting up sketch
+5/11/2021:12:26:14 : Starting kinect
+5/11/2021:12:26:15 : Initiating kinect depth: kinect.initDepth()
+5/11/2021:13:5:56 : ------------------
+5/11/2021:13:5:56 : Starting up sketch
+5/11/2021:13:5:58 : Starting kinect
+5/11/2021:13:5:58 : Initiating kinect depth: kinect.initDepth()
+5/11/2021:13:13:29 : ------------------
+5/11/2021:13:13:29 : Starting up sketch
+5/11/2021:13:13:31 : Starting kinect
+5/11/2021:13:13:31 : Initiating kinect depth: kinect.initDepth()
