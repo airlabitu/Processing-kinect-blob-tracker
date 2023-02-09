@@ -6,6 +6,8 @@ String [] filenames = {"a.mp3", "b.mp3", "c.mp3", "d.mp3", "e.mp3", "f.mp3"};
 int [] circle_radius =  {90, 180, 270, 360, 450, 540};//540, 450, 360, 270, 180, 90} {540, 450, 360, 270, 180, 90};
 boolean [] states = {false, false, false, false, false, false};
 
+ValueFader [] vol = new ValueFader[6];
+
 SoundFile [] soundfiles;
 OscP5 oscP5;
 int framesSinceLastOscMessage = 0;
@@ -13,7 +15,6 @@ int framesSinceLastOscMessage = 0;
 PImage img;
 boolean debug = false;
 boolean mode = false; // kinect = false, mouse = true
-//float x_pos, y_pos;
 
 
 
@@ -29,6 +30,10 @@ void setup() {
   
   for (int i = 0; i < soundfiles.length; i++){
     soundfiles[i] = new SoundFile(this, filenames[i]);
+    soundfiles[i].loop();
+    vol[i] = new ValueFader();
+    vol[i].setMinMax(0.00001,1);
+    vol[i].setVal(vol[i].getMin(), 3000);
     ellipse(width/2, height/2, circle_radius[i]*2, circle_radius[i]*2);
   }
   
@@ -66,8 +71,12 @@ void draw(){
   
   
   for (int i = 0; i < states.length; i++){
-    if (states[i] == true && !soundfiles[i].isPlaying()) soundfiles[i].play();
-    else if (states[i] == false && soundfiles[i].isPlaying()) soundfiles[i].pause(); 
+    if (states[i]) vol[i].setVal(vol[i].getMax(), 1000);
+    else vol[i].setVal(vol[i].getMin(), 1000);
+    vol[i].update();
+    soundfiles[i].amp(vol[i].getVal());
+    //if (states[i] == true && !soundfiles[i].isPlaying()) soundfiles[i].play();
+    //else if (states[i] == false && soundfiles[i].isPlaying()) soundfiles[i].pause(); 
   }
 }
 
