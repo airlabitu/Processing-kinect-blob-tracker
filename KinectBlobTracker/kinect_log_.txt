@@ -237,3 +237,9 @@
 5/11/2021:13:13:29 : Starting up sketch
 5/11/2021:13:13:31 : Starting kinect
 5/11/2021:13:13:31 : Initiating kinect depth: kinect.initDepth()
+5/2/2023:13:42:46 : ------------------
+5/2/2023:13:42:46 : Starting up sketch
+5/2/2023:13:42:48 : Starting video simulation
+5/2/2023:13:45:0 : ------------------
+5/2/2023:13:45:0 : Starting up sketch
+5/2/2023:13:45:2 : Starting video simulation
