@@ -2,7 +2,7 @@ import oscP5.*;
 import processing.sound.*;
 
 
-String [] filenames = {"a.mp3", "b.mp3", "c.mp3", "d.mp3", "e.mp3", "f.mp3"};
+String [] filenames = {"1512a.mp3", "1512b.mp3", "1512c.mp3", "1512d.mp3", "1512e.mp3", "1512f.mp3"};
 int [] circle_radius =  {90, 180, 270, 360, 450, 540};//540, 450, 360, 270, 180, 90} {540, 450, 360, 270, 180, 90};
 boolean [] states = {false, false, false, false, false, false};
 
@@ -12,6 +12,7 @@ int framesSinceLastOscMessage = 0;
 
 PImage img;
 boolean debug = false;
+boolean mode = false; // kinect = false, mouse = true
 //float x_pos, y_pos;
 
 
@@ -23,7 +24,7 @@ void setup() {
   background(0);
   imageMode(CENTER);
   noStroke();
-  img = loadImage("pic.png");
+  img = loadImage("plante1_pic.png");
   soundfiles = new SoundFile[filenames.length];
   
   for (int i = 0; i < soundfiles.length; i++){
@@ -46,6 +47,24 @@ void draw(){
       ellipse(width/2, height/2, circle_radius[i]*2, circle_radius[i]*2);
     }
   }
+  
+  if (mode == true){ // mouse mode
+    
+    for (int j = 0; j < circle_radius.length; j++) states[j] = false; // reset the array
+        
+    for (int j = 0; j < circle_radius.length; j++){ // set state array when blobs are inside a ring
+          
+      float distance = dist(width/2, height/2, mouseX, mouseY);
+          
+      if (j == 0 && distance < circle_radius[j]) states[j] = true;
+      else if (distance < circle_radius[j] && distance > circle_radius[j-1]) states[j] = true;
+          
+    }
+    fill(255,255,0);
+    ellipse(mouseX, mouseY, 40, 40);
+  }
+  
+  
   for (int i = 0; i < states.length; i++){
     if (states[i] == true && !soundfiles[i].isPlaying()) soundfiles[i].play();
     else if (states[i] == false && soundfiles[i].isPlaying()) soundfiles[i].pause(); 
@@ -79,8 +98,8 @@ void oscEvent(OscMessage theOscMessage) {
         println("X: ", x, "Y: ", y, "Min Depth", blobMinDepth, "ID: ", id, "Pixels: ", nrOfPixels__);
         x = constrain(x, 80, 80+480);
         
-        float x_mapped = map(x, 0, 640, 0, 1440);
-        float y_mapped = map(y, 0, 480, 0, 1080);
+        float x_mapped = map(x, 0, 640, 0, width);
+        float y_mapped = map(y, 0, 480, 0, height);
         
 
         
@@ -112,4 +131,5 @@ void oscEvent(OscMessage theOscMessage) {
 
 void keyReleased(){
   if (key == 'd') debug = !debug;
+  if (key == 'm') mode = !mode;
 }
