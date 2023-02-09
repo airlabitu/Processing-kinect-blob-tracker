@@ -2,6 +2,8 @@
 // Volumen is going from low to high, the effects: Delay, Envelope, Rate are all implemented into the sphere class
 // This happens when a user enters the sphere circle, and is adjusted according to distance from user blob center to sphere cente
 
+// NB: press KEY 'd' to control the debug states for the interaction view and mouse simulation mode
+
 import oscP5.*;
 import processing.sound.*;
 
@@ -23,17 +25,20 @@ int kinect_w = 640;
 int kinect_h = 480;
 
 float scale_factor = 2.25;
-int x_offset = 240;
+int x_offset = 0;//240;
 
-boolean kinect_view = true;
+boolean interaction_view = false;
 
 PImage [] pics = new PImage[9];
 
-// alert prosponer
-//OscAlertProsponer soundAlertProsponer;
+// global settings parameters for soundManipulations() function and draw_kinect_view() function
+float borderOne = 0.6; // border where sinus fade is ended
+float borderTwo = 0.3; // border where the linear fade is at a max
+
+int debug = 0; // debug mode selector variable
 
 void setup() {
-  size(1920, 1080);
+  size(1440, 1080);
   frameRate(25);
   textAlign(CENTER);
   
@@ -105,50 +110,95 @@ void setup() {
     s.vol.setMinMax(0.00001, 0.6); // ### 2-track : turn down the max of the clean
   }
   
-  // alert prosponer
-  //soundAlertProsponer = new OscAlertProsponer(oscP5, "127.0.0.1", 11011, "/SoundAlive");
-  //soundAlertProsponer.isActive = true;
+  // draw the background
+  drawBackground();
+  
 }
 
 
 void draw() {
-  background(0);
-  stroke(255);
-  noFill();
-  rect(x_offset, 0, 640*scale_factor, 480*scale_factor);
-  for (int i = 0; i < pics.length; i++){
-    image(pics[i], map(spheresFX[i].x, 0, 640, 0, 640*scale_factor)+x_offset, map(spheresFX[i].y, 0, 480, 0, 480*scale_factor)); 
-  }
-  if (kinect_view) draw_kinect_view();
 
-}
-
-
-void draw_kinect_view(){
   
-  //background(0);
-  fill(0);
-  noStroke();
-  rect(0, 0, kinect_w, kinect_h);
+  // displaying kinect debug view
+  if (interaction_view) draw_interaction();
   
+  // updating the sound spheres
   for (Sphere s : spheresFX) {
-    s.show(0, 255, 0);
     s.update();
     if (simulate) mouseInteraction(s, spheresFX, "LINEAR_FADE");
     else blobsInteraction(s, spheresFX, "LINEAR_FADE");
-  }
-  
+  }  
   for (Sphere s : spheresClean) {
-    s.show(0, 0, 255);
     s.update();
     if (simulate) mouseInteraction(s, spheresClean, "SINUS_FADE");
     else blobsInteraction(s, spheresClean, "SINUS_FADE");
   }
+}
+
+
+void draw_interaction(){
   
-  fill(0, 0, 255);
-  text("Simulate: " + simulate, 50, kinect_h -10);
+  // refresh the background
+  drawBackground();
   
-  // update alert prosponer
-  //soundAlertProsponer.update();
+  fill(0);
+  noStroke();
+  rect(0, 0, kinect_w, kinect_h+30);
+  
+  for (Sphere s : spheresFX) {
+    s.show(0, 255, 0);
+    noFill();
+    stroke(255);
+    circle(s.x, s.y, (s.radius*borderTwo)*2); 
+  }
+  
+  
+  
+  
+  for (Sphere s : spheresClean) {
+    s.show(0, 0, 255);
+    noFill();
+    stroke(255);
+    circle(s.x, s.y, (s.radius*borderOne)*2);
+    circle(s.x, s.y, (s.radius*borderTwo)*2);   
+  }
+  
+  if (debug != 0) {
+    fill(255);
+    textAlign(LEFT);
+    text("DEBUG mode: " + debug, 20, kinect_h +20);
+    
+    if (debug == 1) text("Mouse simulation OFF \nInteraction view ON", 20, kinect_h + 40);
+    else if (debug == 2) text("Mouse simulation ON \nInteraction view ON",20, kinect_h + 40);
+    textAlign(CENTER);
+  }
+}
+
+
+
+// key for toggling mouse simulation
+void keyPressed() {
+  
+  // refresh the background
+  drawBackground();
+  
+  
+  if (key == 'd') {
+    debug++;
+    if (debug==3) debug = 0;
+    
+    if (debug == 0){
+      interaction_view = false;
+      simulate = false;
+    }
+    else if (debug == 1){
+      simulate = false;
+      interaction_view = true;
+    }
+    else if (debug == 2){
+      simulate = true;
+      interaction_view = true;
+    } 
+  }
 
 }

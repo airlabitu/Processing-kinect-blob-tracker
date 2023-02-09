@@ -29,8 +29,10 @@ void oscEvent(OscMessage theOscMessage) {
 }
 
 void mouseInteraction(Sphere s, Sphere [] s_array, String type) {
-  fill(0, 255, 0);
-  ellipse(mouseX, mouseY, 20, 20);
+  if (mouseX < 640 && mouseY < 480){
+    fill(0, 255, 0);
+    ellipse(mouseX, mouseY, 20, 20);
+  }
   int d = (int)dist(mouseX, mouseY, s.x, s.y);
   soundManipulation(s, s_array, d, type);
 }
@@ -47,11 +49,11 @@ void blobsInteraction(Sphere s, Sphere [] s_array, String type) {
       if (b != null) {
         int thisDist = (int)dist(b.x, b.y, s.x, s.y);
         if (thisDist < minDist) minDist = thisDist; 
-
-        fill(map(b.minDepth, 0, 2047, 255, 0));
-        ellipse(b.x, b.y, 50, 50); // tracked user on kinect view
-        ellipse(map(b.x, 0, 640, 0, 640*scale_factor)+x_offset, map(b.y, 0, 480, 0, 480*scale_factor), 50, 50); // tracked user on floor projection
-        
+        if (interaction_view) { // blobs on both kivect and projection view only when kinect view is enabled
+          fill(map(b.minDepth, 0, 2047, 255, 0));
+          ellipse(b.x, b.y, 50, 50); // tracked user on kinect view
+          ellipse(map(b.x, 0, 640, 0, 640*scale_factor)+x_offset, map(b.y, 0, 480, 0, 480*scale_factor), 50, 50); // tracked user on floor projection
+        }
       }
     }
     if (minDist != 999999999) {
@@ -61,15 +63,19 @@ void blobsInteraction(Sphere s, Sphere [] s_array, String type) {
   framesSinceLastOscMessage++;
 }
 
+
+
+
 void soundManipulation(Sphere s, Sphere [] s_array, int dist, String type) {
   // turn off
-float borderOne = 0.6; // border where sinus fade is ended
-  float borderTwo = 0.3; // border where the linear fade is at a max
-  noFill();
+  
+  //float borderOne = 0.6; // border where sinus fade is ended
+  //float borderTwo = 0.3; // border where the linear fade is at a max
+  /*noFill();
   if (type.equals("SINUS_FADE")){
     circle(s.x, s.y, (s.radius*borderOne)*2);
   }
-  circle(s.x, s.y, (s.radius*borderTwo)*2);
+  circle(s.x, s.y, (s.radius*borderTwo)*2);*/
   if (dist < s.radius) {
     // control sphere 's'
     if (type.equals("SINUS_FADE")) s.vol.setVal(sin(map(constrain(dist, s.radius*borderOne, s.radius), s.radius*borderOne, s.radius, 0, PI))*s.vol.getMax(), millisToFadeInside);   // shift over 100 millis      
@@ -104,8 +110,9 @@ float borderOne = 0.6; // border where sinus fade is ended
   }
 }
 
-// key for toggling mouse simulation
-void keyPressed() {
-  if (key == 's') simulate = !simulate;
-  if (key == 'k') kinect_view = !kinect_view;
+void drawBackground(){
+  background(0);
+  for (int i = 0; i < pics.length; i++){
+    image(pics[i], map(spheresFX[i].x, 0, 640, 0, 640*scale_factor)+x_offset, map(spheresFX[i].y, 0, 480, 0, 480*scale_factor)); 
+  }
 }
