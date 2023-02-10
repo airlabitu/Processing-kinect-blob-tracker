@@ -25,7 +25,7 @@ void setup() {
   background(0);
   imageMode(CENTER);
   noStroke();
-  img = loadImage("pic.png");
+  img = loadImage("plante0_pic.png");
   soundfiles = new SoundFile[filenames.length];
   
   for (int i = 0; i < soundfiles.length; i++){
